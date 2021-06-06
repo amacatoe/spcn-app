@@ -12,19 +12,43 @@ export default {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          Home: {
             screens: {
-              TabOneScreen: 'one',
+              HomeScreen: 'home',
             },
           },
-          TabTwo: {
+          Course: {
             screens: {
-              TabTwoScreen: 'two',
+              CourseScreen: 'course',
+            },
+          },
+          SpcOwners: {
+            screens: {
+              SpcOwnersScreen: 'spcowners',
             },
           },
         },
       },
       NotFound: '*',
+      Auth: {
+        screens: {
+          Login: {
+            screens: {
+              LoginScreen: 'login',
+            },
+          },
+          Registration: {
+            screens: {
+              RegistrationScreen: 'registration',
+            },
+          },
+          ForgetPassword: {
+            screens: {
+              ForgetPasswordScreen: 'forgetpassword',
+            },
+          },
+        },
+      }
     },
   },
 };

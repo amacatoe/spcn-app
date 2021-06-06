@@ -4,7 +4,13 @@
  */
 
 import * as React from 'react';
-import { Text as DefaultText, View as DefaultView } from 'react-native';
+import {
+  ScrollView as DefaultScrollView,
+  Text as DefaultText,
+  TouchableWithoutFeedback as DefaultTouchableWithoutFeedback,
+  View as DefaultView,
+  Keyboard
+} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -30,6 +36,8 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
+export type ScrollViewProps = ThemeProps & DefaultScrollView['props'];
+export type TouchableWithoutFeedbackProps = ThemeProps & DefaultTouchableWithoutFeedback['props'];
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
@@ -43,4 +51,24 @@ export function View(props: ViewProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function ScrollView(props: ScrollViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+  return <DefaultScrollView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+
+export function VisibleOnTapKeyboardView(props: TouchableWithoutFeedbackProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+  return <DefaultTouchableWithoutFeedback
+    style={[{ backgroundColor }, style]}
+    onPress={Keyboard.dismiss}
+    accessible={false}
+    {...otherProps}
+  />;
 }

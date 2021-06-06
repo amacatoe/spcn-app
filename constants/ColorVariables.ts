@@ -1,0 +1,9 @@
+export const colorFiolet = '#a7a4e0';
+export const colorWhite = '#fff';
+export const colorLightBlack = '#292929';
+export const colorBlack = '#000';
+export const colorGrey = '#ccc';
+export const colorGreen = "#51c351";
+export const colorRed = "#ea433e";
+export const colorOrange = "#f0ad4e";
+export const colorLightGrey = '#edecf9';
