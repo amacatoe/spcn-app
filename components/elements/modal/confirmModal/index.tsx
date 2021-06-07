@@ -40,7 +40,7 @@ import { changeSpcOwner, isSpcOwned } from "../../../../agent";
 interface IProp {
   visible: boolean;
   hideFunc: () => void;
-  changeFunc: any;
+  changeFunc: () => any;
   deleteItem: string;
 }
 

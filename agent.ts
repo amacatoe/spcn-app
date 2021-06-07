@@ -31,7 +31,7 @@ import { topDangerMessage } from './utils/message';
 //   console.error(error);
 // });
 
-const url = 'http://13e5823237a9.ngrok.io';
+const url = 'http://358978f9895f.ngrok.io';
 
 // User
 
@@ -236,7 +236,7 @@ export const getCourseTakes = (courseId: number): Promise<any> => (
 //     << SpcNotFoundException {String error}, HttpStatus
 
 export const changeSpcOwner = (spc: string, user: { userId: number }): Promise<any> => (
-  fetch(url + '/spc/' + spc + '/spcOwnerUpdate', {
+  fetch(url + '/spc/spcOwnerUpdate?serialNumber=' + spc, {
     method: 'PUT',
     body: JSON.stringify(user), //post body
     headers: {
@@ -252,7 +252,7 @@ export const changeSpcOwner = (spc: string, user: { userId: number }): Promise<a
 //     << JSON: Boolean isSpcOwned | SpcNotFoundException {String error}, HttpStatus
 
 export const isSpcOwned = (spc: string): Promise<any> => (
-  fetch(url + '/spc/' + spc + '/ownership', {
+  fetch(url + '/spc/ownership?serialNumber=' + spc, {
     method: 'GET',
   }).then((response) => response.json())
 );
@@ -263,7 +263,7 @@ export const isSpcOwned = (spc: string): Promise<any> => (
 //    << SpcNotFoundException {String error}, HttpStatus
 
 export const delSpcOwner = (spc: string): Promise<any> => (
-  fetch(url + '/spc/' + spc + '/spcOwnerClean', {
+  fetch(url + '/spc/spcOwnerClean?serialNumber=' + spc, {
     method: 'PUT',
   }).then((response) => response.json()).catch((error) => topDangerMessage(error))
 );
@@ -274,7 +274,7 @@ export const delSpcOwner = (spc: string): Promise<any> => (
 //     << SpcNotFoundException {String error}, HttpStatus
 
 export const connectionTest = (spc: string): Promise<any> => (
-  fetch(url + '/spc/' + spc + '/connectionTest', {
+  fetch(url + '/spc/connectionTest?serialNumber=' + spc, {
     method: 'POST',
   }).then((response) => response.json()).catch((error) => topDangerMessage(error))
 );

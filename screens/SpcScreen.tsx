@@ -63,8 +63,8 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
     });
   }
 
-  async function sendDelSpcOwner(spc: string) {
-    delSpcOwner(spc).then((data) => {
+  async function sendDelSpcOwner() {
+    delSpcOwner(selectedSpc!).then((data) => {
       if (!!data.error) {
         topDangerMessage(data.error);
       }
@@ -138,7 +138,7 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
       <ConfirmModal
         visible={modalConfirmVisible}
         hideFunc={() => setModalConfirmVisible(false)}
-        changeFunc={sendDelSpcOwner(selectedSpc!)}
+        changeFunc={() => sendDelSpcOwner()}
         deleteItem={'дозатор'}
       />
     </View>

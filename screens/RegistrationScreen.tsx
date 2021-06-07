@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Text, View, VisibleOnTapKeyboardView } from '../components/Themed';
 import { colorBlack, colorFiolet, colorGreen, colorRed, colorWhite } from "../constants/ColorVariables";
 import { TextInput, TouchableOpacity } from "react-native";
-import { topDangerMessage, topSuccessMessage } from '../utils/message';
+import { topDangerMessage, topSuccessMessage, topWarningMessage } from '../utils/message';
 import { AuthParamList } from '../types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { validateEmail } from '../utils/validation';
@@ -54,6 +54,7 @@ export default function RegistrationScreen({ route: { params } }: IProp) {
   const [password, setPassword] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
   const { getUser, setUser } = useContext(StorageContext);
+  const { signIn } = useContext(AuthContext);
   const navigation = useNavigation();
 
   const validate = (value: string) => {
@@ -71,23 +72,29 @@ export default function RegistrationScreen({ route: { params } }: IProp) {
 
   async function sendRegistrationRequest() {
     await registration({ username: username, password: password, email: email, isDependent: params.isSpcOwned ?? false }).then((data) => {
-      if (params.isSpcOwner) {
-        var curUser = getUser();
-        associateUsers({ caretakerId: curUser.id, spcOwnerId: data.id }).then((data) =>
-          getUserFromApi(curUser.id).then(async data => {
-            await saveUserInLocalStorage(data);
-            setUser(() => data);
-            topSuccessMessage(curUser.username + ', Вы успешно добавили опекаемого пользователя!');
-            navigation.goBack();
+      if (!!data.error) topWarningMessage(data.error);
+      else {
+        if (params.isSpcOwner) {
+          var curUser = getUser();
+          associateUsers({ caretakerId: curUser.id, spcOwnerId: data.id }).then((data) =>
+            getUserFromApi(curUser.id).then(async data => {
+              await saveUserInLocalStorage(data);
+              setUser(() => data);
+              topSuccessMessage(curUser.username + ', Вы успешно добавили опекаемого пользователя!');
+              navigation.goBack();
+            })
+          )
+        } else {
+          topSuccessMessage(username + ', Вы успешно зарегистрировались! Сейчас Вы будете авторизованы в системе.');
+          auth({ email: email, password: password }).then(async (data) => {
+            if (!!data.error) {
+              topDangerMessage(data.error);
+            } else await saveUserInLocalStorage(data).then(() => {
+              setUser(() => data);
+              signIn();
+            });
           })
-        )
-      } else {
-        topSuccessMessage(username + ', Вы успешно зарегистрировались! Сейчас Вы будете авторизованы в системе.');
-        auth({ email: email, password: password }).then(async (data) => {
-          if (!!data.error) {
-            topDangerMessage(data.error);
-          } else await saveUserInLocalStorage(data).then(() => setUser(() => data));
-        })
+        }
       }
     })
   }

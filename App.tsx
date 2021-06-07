@@ -46,18 +46,17 @@ export default function App() {
       const tmpUser = await getUserFromLocalStorage();
       if (!!tmpUser) {
         await getUserFromApi(tmpUser.id).then((data) => {
-          saveUserInLocalStorage(data);
-          setUser(() => User.mapToModel(tmpUser));
+          saveUserInLocalStorage(data).then(() => setUser(User.mapToModel(tmpUser)));
         });
       }
       setIsSignIn(!!tmpUser);
     };
 
     userSetter();
-  }, [])
+  }, []);
 
 
-  if (!isLoadingComplete || (user === undefined && isSignIn)) {
+  if (!isLoadingComplete) {
     console.log(user);
     return null;
   } else {

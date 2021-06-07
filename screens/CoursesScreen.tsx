@@ -16,6 +16,7 @@ import { CourseStatus } from '../model/courseStatus';
 import { FontAwesome } from '@expo/vector-icons';
 import { topSuccessMessage } from '../utils/message';
 import { ConfirmModal } from '../components/elements/modal/confirmModal';
+import { delCourse } from '../agent';
 
 /**
  * Экран курсов. 
@@ -63,8 +64,8 @@ export default function CoursesScreen({ route: { params } }: IProp) {
     return user.id === parseInt(params.userId);
   }
 
-  async function delCourse(courseId: number) {
-    await delCourse(courseId).then((data) => topSuccessMessage('Курс успешно удален!'))
+  async function delCourseRequest() {
+    await delCourse(selectedCourse!).then((data) => topSuccessMessage('Курс успешно удален!'))
     setVisibility(false);
     setSelectedCourse(undefined);
   }
@@ -151,7 +152,7 @@ export default function CoursesScreen({ route: { params } }: IProp) {
       <ConfirmModal
         visible={visibility}
         hideFunc={() => setVisibility(false)}
-        changeFunc={delCourse(selectedCourse!)}
+        changeFunc={() => delCourseRequest()}
         deleteItem={'курс'}
       />
     </View>

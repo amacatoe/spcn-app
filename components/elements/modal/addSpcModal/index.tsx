@@ -55,16 +55,22 @@ export const SpcModal = (props: IProp) => {
   useEffect(() => {
     setUser(() => getUser())
     setUsers(() => getAllUsers(user))
-    setSelectedUser(() => props.mapSpc?.userId)
+    initSelectedUserId();
   }, [props.mapSpc]);
+
+  function initSelectedUserId() {
+    if(!!props.mapSpc) {
+      setSelectedUser(() => props.mapSpc?.userId);
+    }
+  }
 
   async function sendRequest() {
     if (!!selectedUser && spc.length > 0) {
-      if (!!props.mapSpc) {
-        await addRequest();
-      } else {
-        props.changeFunc(selectedUser, spc)
-      }
+      await addRequest().then(() => {
+        if (props.mapSpc === undefined) {
+          props.changeFunc(selectedUser, spc)
+        }
+      });
     } else {
       topWarningMessage('Пожалуйста, введите необходимые данные.')
     }
@@ -83,6 +89,11 @@ export const SpcModal = (props: IProp) => {
       }
     })
   }
+
+  useEffect(() => {
+    console.log(selectedUser)
+
+  }, []);
 
   return (
     <Modal

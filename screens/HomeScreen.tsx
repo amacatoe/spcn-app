@@ -1,11 +1,14 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import NearestCourses from '../components/elements/course/nearestCourses';
 import { Text, View } from '../components/Themed';
 import { colorFiolet } from '../constants/ColorVariables';
+import { StorageContext } from '../context/Storage';
+import { User } from '../model/user';
 import { HomeParamList } from '../types';
+import { getUserFromLocalStorage } from '../utils/localStorage';
 
 /**
  * Главный экран. 
@@ -23,7 +26,7 @@ type IProp = {
 };
 export default function HomeScreen({ navigation: { navigate } }: IProp) {
   React.useEffect(() => {
-  }, [])
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -73,15 +73,15 @@ export default function ProfileScreen({ navigation: { navigate } }: IProp) {
         <Text style={styles.text}>E-mail: </Text>
         <Text style={styles.textHigh}>{user.email}</Text>
       </View>
-      {user.isDependent && (
+      {user.hasCaretaker && (
         <View style={styles.warningView}>
           <Text style={styles.warningText}>
             На данный момент Вы являетесь опекаемым пользователем.
-            Ваш опекун имеет доступ к вашим дозаторам, может создать Вам курс приемов лекарства.
-            Хотите запретить данные привилегии опекуна?
+            Ваш опекун {user.isDependent ? '' : 'не'} имеет доступ к вашим дозаторам, может создать Вам курс приемов лекарства.
+            {user.isDependent ? 'Хотите запретить данные привилегии опекуна?' : 'Хотите предоставить данные привилегии опекуну?'}
             </Text>
           <TouchableOpacity onPress={sendChangeDependencyRequest} style={[styles.loginBtn, styles.warningBtn]}>
-            <Text>Запретить доступ</Text>
+            <Text>{user.isDependent ? 'Запретить доступ' : 'Предоставить доступ'}</Text>
           </TouchableOpacity>
         </View>
       )}
