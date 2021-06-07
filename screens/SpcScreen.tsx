@@ -13,6 +13,7 @@ import { SpcModal } from '../components/elements/modal/addSpcModal';
 import { StorageContext } from '../context/Storage';
 import { User } from '../model/user';
 import { changeSpcOwner, delSpcOwner } from '../agent';
+import { ConfirmModal } from '../components/elements/modal/confirmModal';
 
 /**
  * Экран дозаторов.
@@ -41,6 +42,8 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
   const [spc, setSpc] = useState<ISpcUserMap>();
   const { getUser } = useContext(StorageContext);
   const [user, setUser] = useState<User>(getUser());
+  const [modalConfirmVisible, setModalConfirmVisible] = useState<boolean>(false);
+  const [selectedSpc, setSelectedSpc] = useState<string>();
 
   useEffect(() => {
     setUser(() => getUser());
@@ -66,6 +69,13 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
         topDangerMessage(data.error);
       }
     });
+    setModalConfirmVisible(false);
+    setSelectedSpc(undefined);
+  }
+
+  function confirmDelSpc(spc: string) {
+    setSelectedSpc(() => spc);
+    setModalConfirmVisible(true);
   }
 
   const btn = (data: ISpcUserMap) => (
@@ -77,7 +87,7 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => sendDelSpcOwner(data.spc)}>
+        <TouchableOpacity onPress={() => confirmDelSpc(data.spc)}>
           <View style={[styles.rowBtn, styles.rowBtnRed]}>
             <FontAwesome name="trash" size={20} color="black" />
           </View>
@@ -124,6 +134,12 @@ export default function SpcScreen({ navigation: { navigate } }: IProp) {
         hideFunc={() => setModalVisible(false)}
         changeFunc={(userId: number, spc: string) => sendChangeSpcOwnerRequest(spc, userId)}
         mapSpc={spc}
+      />
+      <ConfirmModal
+        visible={modalConfirmVisible}
+        hideFunc={() => setModalConfirmVisible(false)}
+        changeFunc={sendDelSpcOwner(selectedSpc!)}
+        deleteItem={'дозатор'}
       />
     </View>
   );

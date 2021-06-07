@@ -39,9 +39,9 @@ export const CourseTakenModal = (props: IProp) => {
 
   useEffect(() => {
     const takesRequest = async () => {
-      //await getCourseTakes(props.courseId).then((data) => {
-        setTakes(() => Take.mapToModels(TakeStub));
-      //})
+      await getCourseTakes(props.courseId).then((data) => {
+        setTakes(() => Take.mapToModels(data));
+      })
     }
     
     takesRequest();

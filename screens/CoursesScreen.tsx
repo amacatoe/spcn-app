@@ -15,6 +15,7 @@ import { User } from '../model/user';
 import { CourseStatus } from '../model/courseStatus';
 import { FontAwesome } from '@expo/vector-icons';
 import { topSuccessMessage } from '../utils/message';
+import { ConfirmModal } from '../components/elements/modal/confirmModal';
 
 /**
  * Экран курсов. 
@@ -47,6 +48,8 @@ export default function CoursesScreen({ route: { params } }: IProp) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { getUser } = useContext(StorageContext);
   const [user, setUser] = useState<User>(getUser());
+  const [selectedCourse, setSelectedCourse] = useState<number>();
+  const [visibility, setVisibility] = useState<boolean>(false);
 
   function getFinalCourses() {
     return getCourses(user, params.userId).filter(course => course.status === CourseStatus.FINISHED);
@@ -62,6 +65,8 @@ export default function CoursesScreen({ route: { params } }: IProp) {
 
   async function delCourse(courseId: number) {
     await delCourse(courseId).then((data) => topSuccessMessage('Курс успешно удален!'))
+    setVisibility(false);
+    setSelectedCourse(undefined);
   }
 
   const renderCourse = (course: Course) => (
@@ -88,8 +93,8 @@ export default function CoursesScreen({ route: { params } }: IProp) {
         </TouchableOpacity>
       </View>
       <View style={styles.btnRow}>
-        <TouchableOpacity onPress={() => delCourse(course.id)}>
-            <FontAwesome name="trash" size={20} color="white" />
+        <TouchableOpacity onPress={() => confirmDelete(course.id)}>
+          <FontAwesome name="trash" size={20} color="white" />
         </TouchableOpacity>
       </View>
     </View>
@@ -99,6 +104,11 @@ export default function CoursesScreen({ route: { params } }: IProp) {
   useEffect(() => {
     setUser(() => getUser())
   }, [])
+
+  function confirmDelete(id: number) {
+    setSelectedCourse(() => id);
+    setVisibility(true);
+  }
 
   return (
     <View style={styles.container}>
@@ -137,6 +147,13 @@ export default function CoursesScreen({ route: { params } }: IProp) {
           </TouchableOpacity>
         </View>
       )}
+
+      <ConfirmModal
+        visible={visibility}
+        hideFunc={() => setVisibility(false)}
+        changeFunc={delCourse(selectedCourse!)}
+        deleteItem={'курс'}
+      />
     </View>
   );
 }

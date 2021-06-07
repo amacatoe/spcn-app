@@ -41,14 +41,14 @@ export default function App() {
 
   useEffect(() => {
     async function userSetter() {
-      //await deleteAll();
-      await saveUserInLocalStorage(userStub);
+      // await deleteAll();
+      //await saveUserInLocalStorage(userStub);
       const tmpUser = await getUserFromLocalStorage();
       if (!!tmpUser) {
-      //   await getUserFromApi(2).then((data) => {
-      //     saveUserInLocalStorage(data);
+        await getUserFromApi(tmpUser.id).then((data) => {
+          saveUserInLocalStorage(data);
           setUser(() => User.mapToModel(tmpUser));
-      //   });
+        });
       }
       setIsSignIn(!!tmpUser);
     };
