@@ -9,7 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { getSpc } from '../utils/spcFunct';
 import { SpcModal } from '../components/elements/modal/addSpcModal';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { parseDate } from '../utils/dates';
+import { getCourseStatus, parseDate } from '../utils/dates';
 import { getCourses } from '../utils/courseFunc';
 import { CourseStatus } from '../model/courseStatus';
 import { StorageContext } from '../context/Storage';
@@ -96,7 +96,7 @@ export default function AddCourseScreen({ route: { params } }: IProp) {
   }
 
   function isEnabled(spc: string) {
-    const course = getCourses(getUser(), params.userId).find(course => (course.status === CourseStatus.ACTIVE && course.spc === spc));
+    const course = getCourses(getUser(), params.userId).find(course => (getCourseStatus(course.dateStarted, course.dateFinished) === CourseStatus.ACTIVE && course.spc === spc));
     return course?.dateFinished;
   }
 
@@ -149,7 +149,7 @@ export default function AddCourseScreen({ route: { params } }: IProp) {
   }
 
   async function onAdd() {
-    await getUserFromApi(getUser()).then((data) => saveUserInLocalStorage(data).then(() => navigation.goBack()))
+    await getUserFromApi(getUser().id).then((data) => saveUserInLocalStorage(data).then(() => navigation.goBack()))
   }
 
   return (

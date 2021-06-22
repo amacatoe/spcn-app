@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Modal from 'react-native-modal';
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { colorBlack, colorFiolet, colorGreen, colorGrey, colorRed, colorWhite } from "../../../../constants/ColorVariables";
-import { validateEmail } from "../../../../utils/validation";
+import { colorBlack,  colorGreen, colorGrey, colorWhite } from "../../../../constants/ColorVariables";
 import { Text } from "../../../Themed";
 import { changeUsername } from "../../../../agent";
 /**
@@ -27,13 +26,17 @@ interface IProp {
   hideFunc: () => void;
   userId: number;
   username: string;
+  changeUsernameFunc: (username: string) => void;
 }
 
 export const SetNameModal = (props: IProp) => {
   const [username, setUsername] = useState<string>(props.username);
 
-  async function sendChangeNameRequest() {
-    changeUsername(props.userId, {username: username});
+  function sendChangeNameRequest() {
+    changeUsername(props.userId, {name: username}).then(() => {
+      props.changeUsernameFunc(username);
+      props.hideFunc();
+    });
   }
 
   return (

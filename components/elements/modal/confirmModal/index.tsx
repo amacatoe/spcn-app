@@ -1,16 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ISpcUserMap } from "../../../../utils/spcFunct";
 import Modal from 'react-native-modal';
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { colorBlack, colorGreen, colorGrey, colorRed, colorWhite } from "../../../../constants/ColorVariables";
-import RNPickerSelect from 'react-native-picker-select';
-import { getAllUsers } from "../../../../utils/userFunc";
-import { User } from "../../../../model/user";
-import { StorageContext } from "../../../../context/Storage";
-import { topDangerMessage, topWarningMessage } from "../../../../utils/message";
-import { add } from "react-native-reanimated";
-import { changeSpcOwner, isSpcOwned } from "../../../../agent";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { colorBlack, colorGrey, colorRed, colorWhite } from "../../../../constants/ColorVariables";
 /**
  * Модальное окно добавления дозатора. 
  * 

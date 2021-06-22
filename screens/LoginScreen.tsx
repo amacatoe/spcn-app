@@ -53,6 +53,7 @@ export default function LoginScreen({ navigation: { navigate } }: IProp) {
         topDangerMessage(data.error);
       } else {
         saveUserInLocalStorage(data).then(() => signIn());
+        
       }
     });
   }

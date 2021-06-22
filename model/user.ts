@@ -29,7 +29,13 @@ import { Course, courseStub, courseStub2, courseStub3 } from "./course";
 
   // }
 
-  // static mapToModels = (entities: any[]): User[] => entities.map(User.mapToModel);
+  static mapToModels = (entities: any[]): User[] => {
+    let users:User[] = [];
+    if (!!entities)  {
+      entities.map((user) => users.push(User.mapToModel(user)));
+    }
+    return users;
+  };
 
   static mapToModel = (entity: any): User => {
     return {
@@ -37,7 +43,7 @@ import { Course, courseStub, courseStub2, courseStub3 } from "./course";
       username: entity.username,
       email: entity.email,
       courses: Course.mapToModels(entity.courses),
-      spcOwners: entity.spcOwners,
+      spcOwners: User.mapToModels(entity.spcOwners),
       spcSerialNumberList: entity.spcSerialNumberList,
       isDependent: entity.isDependent,
       hasCaretaker: entity.hasCaretaker,

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, ActivityIndicator } from 'react-native';
 import { colorBlack, colorFiolet, colorLightBlack, colorLightGrey, colorRed } from '../../../constants/ColorVariables';
 import { Course, courseStub } from '../../../model/course';
-import { isToday, isTodayOrLess, parseDate } from '../../../utils/dates';
+import { getCourseStatus, isToday, isTodayOrLess, parseDate } from '../../../utils/dates';
 import { getAllUsers } from '../../../utils/userFunc';
 import { ScrollView, View, Text } from '../../Themed';
 import InfoText from '../text/InfoText';
@@ -47,7 +47,7 @@ export default function NearestCourses() {
     let tmpCourses: ICourseUserMap[] = [];
     getAllUsers(getUser()).map(user => (
       !!user.courses && (user.courses.map(course => {
-        if (course.status === CourseStatus.ACTIVE) tmpCourses.push({ course: course, userId: user.id, username: user.username! })
+        if (getCourseStatus(course.dateStarted, course.dateFinished) === CourseStatus.ACTIVE) tmpCourses.push({ course: course, userId: user.id, username: user.username! })
       }
       ))
     ))

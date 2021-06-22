@@ -13,6 +13,8 @@ import { Entypo } from '@expo/vector-icons';
 import { SetNameModal } from '../components/elements/modal/nameModal';
 import { deleteAll } from '../utils/localStorage';
 import { changeDependency, getCode } from '../agent';
+import { useState } from 'react';
+import { useContext } from 'react';
 
 /**
  * Экран личного кабинета. 
@@ -36,23 +38,24 @@ type IProp = {
 };
 
 export default function ProfileScreen({ navigation: { navigate } }: IProp) {
-  const { signOut } = React.useContext(AuthContext);
-  const { getUser } = React.useContext(StorageContext);
-  const [user] = React.useState<User>(getUser());
-  const [visible, setVisible] = React.useState<boolean>(false);
+  const { signOut } = useContext(AuthContext);
+  const { getUser } = useContext(StorageContext);
+  const [user] = useState<User>(getUser());
+  const [visible, setVisible] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>(user.username);
 
   async function sendLogOutRequest() {
     await deleteAll().then(() => signOut());
   }
 
-  async function sendChangePasswordRequest() {
+  function sendChangePasswordRequest() {
     /* getCode({ email: user.email }).then((data) =>*/ navigate({
       name: 'ChangePasswordProfileScreen',
       params: { code: /*data.code*/ '1234', email: user.email },
     })/*)*/
   }
 
-  async function sendChangeDependencyRequest() {
+  function sendChangeDependencyRequest() {
     changeDependency(user.id, { isDependent: !user.isDependent });
   }
 
@@ -61,7 +64,7 @@ export default function ProfileScreen({ navigation: { navigate } }: IProp) {
       <View style={styles.textView}>
         <Text style={styles.text}>Текущий пользователь: </Text>
         <View style={styles.viewHigh}>
-          <Text style={[styles.textHigh, styles.username]}>{user.username}</Text>
+          <Text style={[styles.textHigh, styles.username]}>{username}</Text>
           <View style={styles.rowBtn}>
             <TouchableOpacity onPress={() => setVisible(true)}>
                 <Entypo name="edit" size={20} color="black" />
@@ -100,6 +103,7 @@ export default function ProfileScreen({ navigation: { navigate } }: IProp) {
         hideFunc={() => setVisible(false)}
         userId={user.id}
         username={user.username}
+        changeUsernameFunc={setUsername}
       />
     </View>
   );

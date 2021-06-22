@@ -76,21 +76,22 @@ export default function RegistrationScreen({ route: { params } }: IProp) {
       else {
         if (params.isSpcOwner) {
           var curUser = getUser();
-          associateUsers({ caretakerId: curUser.id, spcOwnerId: data.id }).then((data) =>
-            getUserFromApi(curUser.id).then(async data => {
-              await saveUserInLocalStorage(data);
-              setUser(() => data);
-              topSuccessMessage(curUser.username + ', Вы успешно добавили опекаемого пользователя!');
-              navigation.goBack();
+          associateUsers({ caretakerId: curUser.id, spcOwnerId: data.userId }).then(() =>
+            getUserFromApi(curUser.id).then(user => {
+              saveUserInLocalStorage(user).then(() => {
+                setUser(user);
+                topSuccessMessage(curUser.username + ', Вы успешно добавили опекаемого пользователя!');
+                navigation.goBack();
+              });
             })
           )
         } else {
           topSuccessMessage(username + ', Вы успешно зарегистрировались! Сейчас Вы будете авторизованы в системе.');
-          auth({ email: email, password: password }).then(async (data) => {
-            if (!!data.error) {
-              topDangerMessage(data.error);
-            } else await saveUserInLocalStorage(data).then(() => {
-              setUser(() => data);
+          auth({ email: email, password: password }).then((user) => {
+            if (!!user.error) {
+              topDangerMessage(user.error);
+            } else saveUserInLocalStorage(user).then(() => {
+              setUser(user);
               signIn();
             });
           })

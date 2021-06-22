@@ -17,6 +17,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { topSuccessMessage } from '../utils/message';
 import { ConfirmModal } from '../components/elements/modal/confirmModal';
 import { delCourse } from '../agent';
+import { getCourseStatus } from '../utils/dates';
 
 /**
  * Экран курсов. 
@@ -53,11 +54,11 @@ export default function CoursesScreen({ route: { params } }: IProp) {
   const [visibility, setVisibility] = useState<boolean>(false);
 
   function getFinalCourses() {
-    return getCourses(user, params.userId).filter(course => course.status === CourseStatus.FINISHED);
+    return getCourses(user, params.userId).filter(course => getCourseStatus(course.dateStarted, course.dateFinished) === CourseStatus.FINISHED);
   }
 
   function getActiveCourses() {
-    return getCourses(user, params.userId).filter(course => course.status !== CourseStatus.FINISHED);
+    return getCourses(user, params.userId).filter(course => getCourseStatus(course.dateStarted, course.dateFinished) !== CourseStatus.FINISHED);
   }
 
   function isCurrentUser() {
@@ -79,11 +80,11 @@ export default function CoursesScreen({ route: { params } }: IProp) {
         style={[styles.item,
         {
           backgroundColor:
-            course.status === CourseStatus.ACTIVE
+          getCourseStatus(course.dateStarted, course.dateFinished)  === CourseStatus.ACTIVE
               ? colorGreen
-              : (course.status === CourseStatus.WAITING
+              : (getCourseStatus(course.dateStarted, course.dateFinished)  === CourseStatus.WAITING
                 ? colorOrange
-                : (course.status === CourseStatus.FINISHED) ? colorLightGrey : colorWhite)
+                : (getCourseStatus(course.dateStarted, course.dateFinished)  === CourseStatus.FINISHED) ? colorLightGrey : colorWhite)
         }]}
       >
         <TouchableOpacity onPress={() => navigation.navigate({

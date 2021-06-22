@@ -8,7 +8,7 @@ import { Text, View } from '../components/Themed';
 import { colorFiolet, colorLightGrey } from '../constants/ColorVariables';
 import { Course } from '../model/course';
 import { CoursesParamList, HomeParamList } from '../types';
-import { parseDate } from '../utils/dates';
+import { getCourseStatus, parseDate } from '../utils/dates';
 import { CourseStatus } from '../model/courseStatus';
 
 /**
@@ -49,9 +49,9 @@ export default function CourseScreen({ route: { params } }: IProp) {
 
   function getStatus() {
     return (
-      course?.status === CourseStatus.ACTIVE
+      getCourseStatus(course?.dateStarted!, course?.dateFinished!) === CourseStatus.ACTIVE
         ? ('Активен (в процессе)')
-        : (course?.status === CourseStatus.WAITING ? ('В ожидании (скоро начнется)') : ('Завершен'))
+        : (getCourseStatus(course?.dateStarted!, course?.dateFinished!) === CourseStatus.WAITING ? ('В ожидании (скоро начнется)') : ('Завершен'))
     )
   }
 
@@ -82,7 +82,7 @@ export default function CourseScreen({ route: { params } }: IProp) {
         </View>
         <View style={styles.info}>
           <Text style={styles.text}>{'Длительность приема: '}</Text>
-          <Text style={[styles.text, styles.highlightText]}>{course?.takeDurationSec!/60}</Text>
+          <Text style={[styles.text, styles.highlightText]}>{course?.takeDurationSec! / 60}</Text>
         </View>
         <View style={styles.info}>
           <Text style={styles.text}>{'В какое время принимается лекарство: '}</Text>
@@ -98,11 +98,15 @@ export default function CourseScreen({ route: { params } }: IProp) {
           </TouchableOpacity>
         </View>
       )}
-      <CourseTakenModal
-        visible={visibleModal}
-        courseId={course?.id!}
-        hideFunc={() => setVisibleModal(() => false)}
-      />
+      {!!course && (
+        <CourseTakenModal
+          visible={visibleModal}
+          courseId={course.id}
+          hideFunc={() => setVisibleModal(() => false)}
+        />
+      )
+
+      }
     </View>
   );
 }

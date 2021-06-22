@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ISpcUserMap } from "../../../../utils/spcFunct";
 import Modal from 'react-native-modal';
-import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { colorBlack, colorGreen, colorGrey, colorRed, colorWhite } from "../../../../constants/ColorVariables";
-import RNPickerSelect from 'react-native-picker-select';
-import { getAllUsers } from "../../../../utils/userFunc";
-import { User } from "../../../../model/user";
-import { Take, TakeStub } from "../../../../model/take";
-import { getTakes } from "../../../../utils/courseFunc";
-import FlatList, { PlainList } from "flatlist-react";
+import { Take } from "../../../../model/take";
+import { PlainList } from "flatlist-react";
 import { parseDate } from "../../../../utils/dates";
 import { getCourseTakes } from "../../../../agent";
 /**
@@ -43,13 +38,13 @@ export const CourseTakenModal = (props: IProp) => {
         setTakes(() => Take.mapToModels(data));
       })
     }
-    
+
     takesRequest();
   }, [props.courseId]);
 
   const renderItem = (item: Take, index: number) => (
     <View key={'takes-' + index} style={styles.takesView}>
-      <View style={[styles.indicator, {backgroundColor: item.taken ? colorGreen : colorRed}]}></View>
+      <View style={[styles.indicator, { backgroundColor: item.taken ? colorGreen : colorRed }]}></View>
       <Text>{parseDate(new Date(item.date), "D MMM YYYY, HH:mm") + ': Лекарство ' + (item.taken ? 'принято' : 'не принято')}</Text>
     </View>
   )
@@ -63,10 +58,11 @@ export const CourseTakenModal = (props: IProp) => {
     >
       <View style={styles.modalView}>
         <ScrollView style={styles.scrollView}>
-          <PlainList
+          {takes.length > 0 ? (<PlainList
             list={takes}
             renderItem={renderItem}
-          />
+          />) : (<Text>Стастистика отсутствует.</Text>)
+          }
         </ScrollView>
 
         <View style={styles.btnView}>

@@ -31,7 +31,7 @@ import { topDangerMessage } from './utils/message';
 //   console.error(error);
 // });
 
-const url = 'http://358978f9895f.ngrok.io';
+const url = 'http://64d4f2f5bfbb.ngrok.io';
 
 // User
 
@@ -49,7 +49,7 @@ export const registration = (user: { username: string, email: string, password: 
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => topDangerMessage(error.message))
 );
 
 // 2.  Запрос на авторизацию юзера
@@ -66,7 +66,7 @@ export const auth = (user: { email: string, password: string }): Promise<any> =>
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => topDangerMessage(error.message))
 );
 
 // 3.  Запрос на отправку кода для подтверждения восстановления пароля юзера
@@ -83,7 +83,7 @@ export const getCode = (user: { email: string }): Promise<any> => (
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => topDangerMessage(error.message))
 );
 
 // 4.  Запрос на изменение пароля юзера
@@ -100,7 +100,7 @@ export const changePassword = (user: { email: string, password: string }): Promi
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 5.  Запрос на изменение имени юзера
@@ -108,7 +108,7 @@ export const changePassword = (user: { email: string, password: string }): Promi
 //     >> PathVariable: Long userId, JSON: String username
 //     << HttpStatus
 
-export const changeUsername = (id: number, user: { username: string }): Promise<any> => (
+export const changeUsername = (id: number, user: { name: string }): Promise<any> => (
   //POST request
   fetch(url + '/users/' + id + '/nameUpdate', {
     method: 'PUT', //Request Type
@@ -117,7 +117,7 @@ export const changeUsername = (id: number, user: { username: string }): Promise<
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 6.  Запрос на изменение зависимости юзера
@@ -134,7 +134,7 @@ export const changeDependency = (id: number, user: { isDependent: boolean }): Pr
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 7.  Запрос на получение юзера
@@ -147,7 +147,7 @@ export const getUserFromApi = (id: number): Promise<any> => (
   fetch(url + '/users/' + id, {
     method: 'GET',
     //Request Type
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => topDangerMessage(error.message))
 );
 
 // Monitoring
@@ -166,7 +166,7 @@ export const associateUsers = (users: { caretakerId: number, spcOwnerId: number 
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 9.  Запрос на отправку кода для подтверждения опеки над зарегистрированным юзером
@@ -183,7 +183,7 @@ export const getRegisterCode = (user: { email: string }): Promise<any> => (
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // Course
@@ -202,7 +202,7 @@ export const addCourse = (courseInfo: { course: CourseToSave, userId: number }):
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => topDangerMessage(error.message))
 );
 
 // 11. Запрос на удаление курса
@@ -214,7 +214,7 @@ export const delCourse = (courseId: number): Promise<any> => (
   //POST request
   fetch(url + '/courses/' + courseId, {
     method: 'DELETE',
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 12. Запрос на получение статистики по курсу
@@ -225,7 +225,7 @@ export const delCourse = (courseId: number): Promise<any> => (
 export const getCourseTakes = (courseId: number): Promise<any> => (
   fetch(url + '/courses/' + courseId + '/statistics', {
     method: 'GET',
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // Spc
@@ -243,7 +243,7 @@ export const changeSpcOwner = (spc: string, user: { userId: number }): Promise<a
       //Header Defination
       'Content-Type': 'application/json;charset=UTF-8',
     },
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 14. Запрос на получение данных о существовании связи дозатора и юзера
@@ -265,7 +265,7 @@ export const isSpcOwned = (spc: string): Promise<any> => (
 export const delSpcOwner = (spc: string): Promise<any> => (
   fetch(url + '/spc/spcOwnerClean?serialNumber=' + spc, {
     method: 'PUT',
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );
 
 // 16. Вызов оповещающего сигнала дозатора
@@ -276,5 +276,5 @@ export const delSpcOwner = (spc: string): Promise<any> => (
 export const connectionTest = (spc: string): Promise<any> => (
   fetch(url + '/spc/connectionTest?serialNumber=' + spc, {
     method: 'POST',
-  }).then((response) => response.json()).catch((error) => topDangerMessage(error))
+  }).then((response) => response.json()).catch((error) => console.log(error.message))
 );

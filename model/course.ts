@@ -4,7 +4,7 @@ import { CourseStatus } from '../model/courseStatus';
 export class CourseToSave {
   id: number | undefined = undefined;
   medicine: string;
-  spc: string;
+  spcSerialNumber: string;
   dateStarted: string;
   dateFinished: string;
   timetable: string[]; //уникальное время
@@ -14,7 +14,7 @@ export class CourseToSave {
     return {
       id: undefined,
       medicine: medicine,
-      spc: spc,
+      spcSerialNumber: spc,
       dateStarted: dateStarted,
       dateFinished: dateFinished,
       timetable: timetable,
@@ -29,22 +29,25 @@ export class Course {
   spc: string;
   dateStarted: string;
   dateFinished: string;
-  status: CourseStatus;
   timetable: string[]; //уникальное время
   takeDurationSec: number;
 
-  static mapToModels = (entities: any[]): Course[] => (
-    !!entities ? (entities.map(Course.mapToModel)) : []
-  );
+  static mapToModels = (entities: any[]): Course[] => {
+    let courses:Course[] = [];
+    if (!!entities)  {
+      entities.map((course) => courses.push(Course.mapToModel(course)));
+    }
+    console.log(courses);
+    return courses;
+  };
 
   static mapToModel = (entity: any): Course => {
     return {
       id: entity.id,
       medicine: entity.medicine,
-      spc: entity.spc,
+      spc: entity.spcSerialNumber,
       dateStarted: entity.dateStarted,
       dateFinished: entity.dateFinished,
-      status: getCourseStatus(entity.dateStarted, entity.dateFinished),
       timetable: entity.timetable,
       takeDurationSec: entity.takeDurationSec,
     };
@@ -54,7 +57,7 @@ export class Course {
     return {
       id: model.id,
       medicine: model.medicine,
-      spc: model.spc,
+      spcSerialNumber: model.spc,
       dateStarted: model.dateStarted,
       dateFinished: model.dateFinished,
       timetable: model.timetable,
