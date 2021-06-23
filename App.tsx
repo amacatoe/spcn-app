@@ -12,6 +12,11 @@ import 'moment/locale/ru';
 import { User, userStub } from './model/user';
 import { deleteAll, getUserFromLocalStorage, saveUserInLocalStorage } from './utils/localStorage';
 import { getUserFromApi } from './agent';
+import { createScheduleNotification, creatorNotification, registerForPushNotificationsAsync, schedulePushNotification } from './components/elements/notify/pushNotify';
+import { getAllUsers } from './utils/userFunc';
+import { getCourseStatus, getSecondsToDate, parseDate } from './utils/dates';
+import { CourseStatus } from './model/courseStatus';
+import { Notifications } from 'react-native-notifications';
 moment.locale('ru');
 
 export default function App() {
@@ -39,9 +44,10 @@ export default function App() {
     }
   }), [user]);
 
+
   useEffect(() => {
     async function userSetter() {
-      // await deleteAll();
+      //await deleteAll();
       //await saveUserInLocalStorage(userStub);
       const tmpUser = await getUserFromLocalStorage();
       if (!!tmpUser) {
@@ -50,6 +56,8 @@ export default function App() {
         });
       }
       setIsSignIn(!!tmpUser);
+      await creatorNotification(tmpUser);
+      //registerForPushNotificationsAsync();
     };
 
     userSetter();

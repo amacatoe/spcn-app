@@ -18,6 +18,8 @@ import { CourseToSave } from '../model/course';
 import { topWarningMessage } from '../utils/message';
 import { saveUserInLocalStorage } from '../utils/localStorage';
 import { useNavigation } from '@react-navigation/core';
+import { User } from '../model/user';
+import { createScheduleNotification } from '../components/elements/notify/pushNotify';
 
 /**
  * Экран добавления курса. 
@@ -149,7 +151,17 @@ export default function AddCourseScreen({ route: { params } }: IProp) {
   }
 
   async function onAdd() {
-    await getUserFromApi(getUser().id).then((data) => saveUserInLocalStorage(data).then(() => navigation.goBack()))
+    await getUserFromApi(getUser().id).then((data) => 
+    saveUserInLocalStorage(User.mapToModel(data)).then(() => {
+      createScheduleNotification(
+        getUser().username, 
+        timetable, 
+        parseDate(dateStarted!, 'YYYY-MM-DD'), 
+        parseDate(dateFinished!, 'YYYY-MM-DD'),
+        medicine
+      );
+      navigation.goBack()
+    }))
   }
 
   return (

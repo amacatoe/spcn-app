@@ -2,6 +2,10 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, Button, Platform } from 'react-native';
+import { CourseStatus } from '../../../model/courseStatus';
+import { User } from '../../../model/user';
+import { getCourseStatus, getSecondsToDate, parseDate } from '../../../utils/dates';
+import { getAllUsers } from '../../../utils/userFunc';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -11,65 +15,17 @@ Notifications.setNotificationHandler({
   }),
 });
 
-//TODO: разобраться
-export function PushNotification() {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState<boolean>(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token!));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      }}>
-      <Text>Your expo push token: {expoPushToken}</Text>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Title: {notification && notification.request.content.title} </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-      </View>
-      <Button
-        title="Press to schedule a notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      />
-    </View>
-  );
-}
-
-async function schedulePushNotification() {
+export async function schedulePushNotification(medicine: string, username: string, time: number) {
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: "You've got mail! 📬",
-      body: 'Here is the notification body',
-      data: { data: 'goes here' },
+      title: "Пользователю " + username,
+      body: 'Необходимо принять лекарство: ' + medicine,
     },
-    trigger: { seconds: 2 },
+    trigger: { seconds: time },
   });
 }
 
-async function registerForPushNotificationsAsync() {
+export async function registerForPushNotificationsAsync() {
   let token;
   if (Constants.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -98,4 +54,41 @@ async function registerForPushNotificationsAsync() {
   }
 
   return token;
+}
+
+export async function createScheduleNotification(username: string, timetable: string[], dateStarted: string, dateFinished: string, medicine: string) {
+  if(getCourseStatus(dateStarted, dateFinished) === CourseStatus.ACTIVE) {
+    let actualTimetable: string[] = timetable?.filter((f) => f >= parseDate(new Date(), 'HH:mm'));
+
+    if (actualTimetable.length>0) {
+      actualTimetable.map(time => {
+        let date = parseDate(new Date(), 'YYYY-MM-DD') + 'T' + time;
+        schedulePushNotification(medicine, username, getSecondsToDate(new Date(), new Date(date)));
+      });
+    }
+
+    let nextDay = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()+1);
+    var days = Math.ceil((new Date(dateFinished).getTime() - nextDay.getTime())/(1000*60*60*24));
+
+    for (let i = 0; i<days; i++) {
+      timetable.map(time => {
+        let date = parseDate(nextDay, 'YYYY-MM-DD') + 'T' + time;
+        schedulePushNotification(medicine, username, getSecondsToDate(new Date(), new Date(date)));
+      });
+
+      nextDay = new Date(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate()+1);
+    }
+  }
+}
+
+
+export const creatorNotification = async (currentUser: User) => {
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  getAllUsers(currentUser).map((user) => {
+    if (!!user.courses && user.courses.length > 0) {
+      user.courses.map((course) => {
+        createScheduleNotification(user.username, course.timetable, course.dateStarted, course.dateFinished, course.medicine);
+      })
+    }
+  })
 }

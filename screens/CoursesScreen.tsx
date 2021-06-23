@@ -16,7 +16,7 @@ import { CourseStatus } from '../model/courseStatus';
 import { FontAwesome } from '@expo/vector-icons';
 import { topSuccessMessage } from '../utils/message';
 import { ConfirmModal } from '../components/elements/modal/confirmModal';
-import { delCourse } from '../agent';
+import { delCourse, getUserFromApi } from '../agent';
 import { getCourseStatus } from '../utils/dates';
 
 /**
@@ -48,8 +48,8 @@ type IProp = {
 export default function CoursesScreen({ route: { params } }: IProp) {
   const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { getUser } = useContext(StorageContext);
-  const [user, setUser] = useState<User>(getUser());
+  const { getUser, setUser } = useContext(StorageContext);
+  const [user, setInnerUser] = useState<User>(getUser());
   const [selectedCourse, setSelectedCourse] = useState<number>();
   const [visibility, setVisibility] = useState<boolean>(false);
 
@@ -66,7 +66,12 @@ export default function CoursesScreen({ route: { params } }: IProp) {
   }
 
   async function delCourseRequest() {
-    await delCourse(selectedCourse!).then((data) => topSuccessMessage('Курс успешно удален!'))
+    await delCourse(selectedCourse!).then((data) => {
+      topSuccessMessage('Курс успешно удален!');
+      getUserFromApi(getUser().id).then((data) => {
+        setUser(User.mapToModel(data)).then(() => setInnerUser(User.mapToModel(data)));
+      });
+  })
     setVisibility(false);
     setSelectedCourse(undefined);
   }
@@ -104,8 +109,13 @@ export default function CoursesScreen({ route: { params } }: IProp) {
 
 
   useEffect(() => {
-    setUser(() => getUser())
-  }, [])
+    const rerender = navigation.addListener("focus", () => {
+      getUserFromApi(getUser().id).then((data) => {
+        setUser(User.mapToModel(data)).then(() => setInnerUser(User.mapToModel(data)));
+      })
+    })
+    return rerender;
+  }, [navigation])
 
   function confirmDelete(id: number) {
     setSelectedCourse(() => id);

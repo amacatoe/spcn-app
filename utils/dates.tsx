@@ -35,3 +35,7 @@ export function getCourseStatus(dateStarted: string, dateFinished: string): Cour
     return CourseStatus.ACTIVE;
   } else return CourseStatus.WAITING;
 }
+
+export function getSecondsToDate(dateFrom: Date, dateTo: Date) {
+  return Math.round((dateTo.getTime() - dateFrom.getTime()) / 1000);
+} 
