@@ -12,7 +12,7 @@ import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { SpcModal } from '../components/elements/modal/addSpcModal';
 import { StorageContext } from '../context/Storage';
 import { User } from '../model/user';
-import { changeSpcOwner, delSpcOwner } from '../agent';
+import { changeSpcOwner, delSpcOwner, getUserFromApi } from '../agent';
 import { ConfirmModal } from '../components/elements/modal/confirmModal';
 
 /**
@@ -36,18 +36,25 @@ type SpcScreenNavigationProp = StackNavigationProp<HomeParamList, 'SpcScreen'>;
 type IProp = {
   navigation: SpcScreenNavigationProp;
 };
-export default function SpcScreen({ navigation: { navigate } }: IProp) {
+export default function SpcScreen({ navigation }: IProp) {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
   const [spc, setSpc] = useState<ISpcUserMap>();
-  const { getUser } = useContext(StorageContext);
-  const [user, setUser] = useState<User>(getUser());
+  const { getUser, setUser } = useContext(StorageContext);
+  const [user, setInnerUser] = useState<User>(getUser());
   const [modalConfirmVisible, setModalConfirmVisible] = useState<boolean>(false);
   const [selectedSpc, setSelectedSpc] = useState<string>();
 
   useEffect(() => {
-    setUser(() => getUser());
-  }, []);
+    if (!modalVisible) {
+      const rerender = () => {
+        getUserFromApi(getUser().id).then((data) => {
+          setUser(User.mapToModel(data)).then(() => setInnerUser(User.mapToModel(data)));
+        })
+      }
+      return rerender;
+    }
+  }, [modalVisible]);
 
   function openModal(data?: ISpcUserMap) {
     setModalVisible(() => true);

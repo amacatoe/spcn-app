@@ -87,7 +87,9 @@ export const creatorNotification = async (currentUser: User) => {
   getAllUsers(currentUser).map((user) => {
     if (!!user.courses && user.courses.length > 0) {
       user.courses.map((course) => {
-        createScheduleNotification(user.username, course.timetable, course.dateStarted, course.dateFinished, course.medicine);
+        if (getCourseStatus(course.dateStarted, course.dateFinished) !== CourseStatus.FINISHED) {
+          createScheduleNotification(user.username, course.timetable, course.dateStarted, course.dateFinished, course.medicine);
+        } 
       })
     }
   })

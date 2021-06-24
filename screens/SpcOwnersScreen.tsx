@@ -12,6 +12,7 @@ import { StorageContext } from '../context/Storage';
 import InfoText from '../components/elements/text/InfoText';
 import Modal from 'react-native-modal';
 import { AddSpcOwnerModal } from '../components/elements/modal/spcOwnerModal';
+import { getUserFromApi } from '../agent';
 
 /**
  * Экран опекаемых пользователей. 
@@ -27,9 +28,9 @@ type IProp = {
 
 export default function SpcOwnersScreen({ navigation: { navigate } }: IProp) {
   const navigation = useNavigation();
-  const { getUser } = React.useContext(StorageContext)
+  const { getUser, setUser } = React.useContext(StorageContext)
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [user, setUser] = useState<User>(getUser());
+  const [user, setInnerUser] = useState<User>(getUser());
   const [visible, setVisible] = useState<boolean>(false);
 
   const renderSpcOwners = (user: User) => (
@@ -55,7 +56,12 @@ export default function SpcOwnersScreen({ navigation: { navigate } }: IProp) {
   }
 
   useEffect(() => {
-    setUser(() => getUser());
+    const rerender = navigation.addListener("focus", () => {
+      getUserFromApi(getUser().id).then((data) => {
+        setUser(User.mapToModel(data)).then(() => setInnerUser(User.mapToModel(data)));
+      })
+    })
+    return rerender;
   }, [])
 
   return (

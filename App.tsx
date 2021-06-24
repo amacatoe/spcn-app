@@ -17,6 +17,7 @@ import { getAllUsers } from './utils/userFunc';
 import { getCourseStatus, getSecondsToDate, parseDate } from './utils/dates';
 import { CourseStatus } from './model/courseStatus';
 import { Notifications } from 'react-native-notifications';
+import { LogBox } from 'react-native';
 moment.locale('ru');
 
 export default function App() {
@@ -59,6 +60,8 @@ export default function App() {
       await creatorNotification(tmpUser);
       //registerForPushNotificationsAsync();
     };
+
+    LogBox.ignoreAllLogs();
 
     userSetter();
   }, []);
